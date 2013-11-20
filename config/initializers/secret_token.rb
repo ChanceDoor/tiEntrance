@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Tientrance::Application.config.secret_key_base = 'b1813b017eb029a74b3c8b7f62d35b8efd4fef1a36a5e9118af543708466a0b3a89f2075a022701a48fd3653c5f45b4b5927d532343f5cd053b5f5f5d56d7fd2'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Tientrance::Application.config.secret_key_base = secure_token
